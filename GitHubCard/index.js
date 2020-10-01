@@ -1,8 +1,22 @@
+import axios from 'axios'
+
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
+
+/* axios.get('https://api.github.com/users/dav1dchang')
+.then(res=> {
+  console.log(res)
+  console.log(res.data)
+})
+.catch(drama=>{
+  console.log(drama)
+  debugger
+})*/
+
+/*conflicting with step 4 so i commented out step 1 axios.get*/
 
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
@@ -17,6 +31,15 @@
     and append the returned markup to the DOM as a child of .cards
 */
 
+axios.get('https://api.github.com/users/dav1dchang')
+.then(res=> {
+  console.log(res)
+  return gitHubCardMaker(res.data)
+})
+.catch(drama=>{
+  console.log(drama)
+})
+
 /*
   STEP 5: Now that you have your own card getting added to the DOM, either
     follow this link in your browser https://api.github.com/users/<Your github name>/followers,
@@ -28,7 +51,16 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [ 'tetondan', 'dustinmyers', 'justsml', 'luishrd', 'bigknell'];
+
+followersArray.forEach(item => {
+    axios.get(`https://api.github.com/users/${item}`)
+    .then(res => {
+      return gitHubCardMaker(res.data)
+    }).catch(error => {
+      console.log(`Error: ${error}`)
+    })
+})//followersArray.forEach
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -50,6 +82,58 @@ const followersArray = [];
     </div>
 */
 
+const entryPoint = document.querySelector('.container')
+
+function gitHubCardMaker(object) {
+  //declaring vars
+  const gitCard = document.createElement('div')
+  const gitImage = document.createElement('img')
+  const cardInfo = document.createElement('div')
+  const gitName = document.createElement('h3')
+  const gitUserName = document.createElement('p')
+  const location = document.createElement('p')
+  const profile = document.createElement('p')
+  const profileA = document.createElement('a')
+  const followers = document.createElement('p')
+  const following = document.createElement('p')
+  const bio = document.createElement('p')
+
+  //attaching classes
+  gitCard.classList.add('card')
+  cardInfo.classList.add('card-info')
+  gitName.classList.add('name')
+  gitUserName.classList.add('username')
+
+  //sourcing
+  gitImage.src = object.avatar_url
+  gitName.textContent = object.name
+  gitUserName.textContent = object.login
+  location.textContent = `Location: ${object.location}`
+  profileA.href = object.html_url
+  profileA.textContent = `${profileA}`
+  profile.textContent = `Profile: `
+  followers.textContent = `Followers: ${object.followers}`
+  following.textContent = `Following: ${object.following}`
+  bio.textContent = `Bio: ${object.bio}`
+
+  //appending children to parent
+  entryPoint.append(gitCard)
+  gitCard.appendChild(gitImage)
+  gitCard.appendChild(cardInfo)
+  cardInfo.appendChild(gitName)
+  cardInfo.appendChild(gitUserName)
+  cardInfo.appendChild(location)
+  cardInfo.appendChild(profile)
+  profile.appendChild(profileA)
+  cardInfo.appendChild(followers)
+  cardInfo.appendChild(following)
+  cardInfo.appendChild(bio)
+
+  console.log(profileA)
+
+  return gitCard
+}//gitHubCardMaker
+  
 /*
   List of LS Instructors Github username's:
     tetondan
